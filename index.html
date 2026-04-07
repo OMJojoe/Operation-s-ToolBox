@@ -62,8 +62,8 @@
   .hero {
     padding: 140px 2rem 80px;
     max-width: 1100px; margin: 0 auto;
-    display: flex; align-items: flex-end; justify-content: space-between;
-    gap: 2rem; flex-wrap: wrap;
+    display: grid; grid-template-columns: 1fr 340px;
+    gap: 2rem; align-items: start;
   }
   .hero-left { max-width: 560px; }
   .hero-tag {
@@ -93,16 +93,77 @@
   }
 
   .hero-stats {
-    display: flex; gap: 2px; flex-direction: column; align-items: flex-end;
+    display: flex; gap: 8px; align-items: center; margin-top: 20px;
+    flex-wrap: wrap;
   }
   .stat-num {
-    font-size: 56px; font-weight: 800; letter-spacing: -0.05em;
+    font-size: 22px; font-weight: 700;
     color: transparent;
     background: linear-gradient(135deg, var(--accent2), var(--accent));
     -webkit-background-clip: text; background-clip: text;
-    line-height: 1;
   }
   .stat-label { font-size: 13px; color: var(--muted); font-family: var(--font-mono); }
+
+  /* REMINDER CARD (hero right) */
+  .hero-reminder-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    height: 280px;
+    display: flex; flex-direction: column;
+    position: relative;
+  }
+  .hero-reminder-header {
+    padding: 16px 20px 12px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .hero-reminder-title { font-size: 13px; font-weight: 700; color: var(--text); letter-spacing: -0.01em; }
+  .hero-reminder-count {
+    font-size: 11px; padding: 2px 8px; border-radius: 99px;
+    background: rgba(212,245,76,0.12); color: var(--accent);
+    font-family: var(--font-mono); font-weight: 600;
+  }
+  .hero-reminder-scroll {
+    flex: 1; overflow: hidden; position: relative;
+  }
+  .hero-reminder-track {
+    display: flex; flex-direction: column; gap: 0;
+    animation: scroll-up 12s linear infinite;
+    padding: 8px 0;
+  }
+  .hero-reminder-scroll:hover .hero-reminder-track { animation-play-state: paused; }
+  @keyframes scroll-up {
+    0%   { transform: translateY(0); }
+    100% { transform: translateY(-50%); }
+  }
+  .hero-reminder-item {
+    padding: 10px 20px;
+    font-size: 13px; font-family: var(--font-mono); color: var(--text);
+    line-height: 1.5; border-bottom: 1px solid var(--border);
+    display: flex; align-items: flex-start; gap: 10px;
+  }
+  .hero-reminder-item::before {
+    content: '★'; color: var(--accent); font-size: 10px; margin-top: 3px; flex-shrink: 0;
+  }
+  .hero-reminder-empty {
+    padding: 20px; font-size: 12px; color: var(--muted);
+    font-family: var(--font-mono); text-align: center; margin-top: 40px;
+  }
+  .hero-reminder-footer {
+    padding: 10px 16px;
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .hero-reminder-footer button {
+    width: 100%; padding: 8px; border-radius: 8px;
+    background: rgba(212,245,76,0.08); border: 1px solid rgba(212,245,76,0.2);
+    color: var(--accent); font-size: 12px; font-family: var(--font-display);
+    font-weight: 600; cursor: pointer; transition: all 0.15s;
+  }
+  .hero-reminder-footer button:hover { background: rgba(212,245,76,0.15); }
 
   /* TOOL GRID */
   .tools-section {
@@ -281,6 +342,71 @@
   .tool-card:nth-child(2) { animation-delay: 0.1s; }
   .tool-card:nth-child(3) { animation-delay: 0.15s; }
   .tool-card:nth-child(4) { animation-delay: 0.2s; }
+
+  /* TICKER */
+  .ticker-wrap {
+    position: fixed; top: 60px; left: 0; right: 0; z-index: 99;
+    background: var(--accent); overflow: hidden;
+    height: 0; transition: height 0.3s ease;
+  }
+  .ticker-wrap.has-items { height: 32px; }
+  .ticker-track {
+    display: flex; align-items: center; height: 32px;
+    white-space: nowrap;
+    animation: ticker-scroll 30s linear infinite;
+  }
+  .ticker-wrap:hover .ticker-track { animation-play-state: paused; }
+  @keyframes ticker-scroll {
+    0%   { transform: translateX(100vw); }
+    100% { transform: translateX(-100%); }
+  }
+  .ticker-item {
+    font-size: 12px; font-weight: 700; color: #0b0c0e;
+    font-family: var(--font-display); letter-spacing: 0.03em;
+    padding: 0 40px;
+  }
+  .ticker-item::before {
+    content: '★'; margin-right: 12px; font-size: 10px;
+  }
+  /* push hero down when ticker visible */
+  .hero { transition: padding-top 0.3s ease; }
+  .hero.ticker-offset { padding-top: 172px; }
+
+  /* REMINDER MODAL */
+  .reminder-modal {
+    display: none; position: fixed; inset: 0; z-index: 200;
+    background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+    align-items: center; justify-content: center;
+  }
+  .reminder-modal.open { display: flex; }
+  .reminder-box {
+    background: var(--bg2); border: 1px solid var(--border-hover);
+    border-radius: 16px; padding: 28px; width: min(480px, 90vw);
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .reminder-box h3 { font-size: 16px; font-weight: 700; color: var(--text); }
+  .reminder-box textarea {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 12px;
+    font-family: var(--font-mono); font-size: 13px; color: var(--text);
+    resize: none; min-height: 80px; outline: none;
+    transition: border-color 0.18s;
+  }
+  .reminder-box textarea:focus { border-color: rgba(212,245,76,0.4); }
+  .reminder-list { display: flex; flex-direction: column; gap: 6px; max-height: 180px; overflow-y: auto; }
+  .reminder-entry {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--bg3); border-radius: 8px; padding: 8px 12px;
+    font-size: 12px; font-family: var(--font-mono); color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .reminder-entry span { flex: 1; margin-right: 10px; }
+  .reminder-del {
+    background: none; border: none; color: var(--muted); cursor: pointer;
+    font-size: 14px; padding: 0 4px; transition: color 0.15s;
+  }
+  .reminder-del:hover { color: var(--accent3); }
+  .reminder-empty { font-size: 12px; color: var(--muted); font-family: var(--font-mono); }
 </style>
 </head>
 <body>
@@ -290,18 +416,51 @@
   <div class="nav-links">
     <button class="nav-link active" onclick="scrollTo(0,0)">Home</button>
     <button class="nav-link" onclick="document.querySelector('.tools-section').scrollIntoView({behavior:'smooth'})">Tools</button>
+    <button class="nav-link" onclick="openReminder()" id="reminder-nav-btn">📢 Reminders</button>
   </div>
 </nav>
+<div class="ticker-wrap" id="ticker-wrap">
+  <div class="ticker-track" id="ticker-track"></div>
+</div>
+
+<div class="reminder-modal" id="reminder-modal">
+  <div class="reminder-box">
+    <h3>📢 Manage reminders</h3>
+    <textarea id="reminder-input" placeholder="Type a reminder and press Add..."></textarea>
+    <div class="btn-group">
+      <button class="btn-run" onclick="addReminder()">+ Add</button>
+      <button class="btn-secondary" onclick="closeReminder()">Close</button>
+    </div>
+    <div id="reminder-list-wrap">
+      <p class="reminder-empty" id="reminder-empty" style="display:none;">No reminders yet.</p>
+      <div class="reminder-list" id="reminder-list"></div>
+    </div>
+  </div>
+</div>
+
 
 <div class="hero">
   <div class="hero-left">
     <div class="hero-tag">Your data utilities</div>
     <h1>Less clicks.<br /><em>More done.</em></h1>
     <p class="hero-sub">All your go-to data tools in one place — no more jumping between sheets and formulas.</p>
+    <div class="hero-stats">
+      <div class="stat-num" id="tool-count">3</div>
+      <div class="stat-label">tools ready</div>
+    </div>
   </div>
-  <div class="hero-stats">
-    <div class="stat-num" id="tool-count">3</div>
-    <div class="stat-label">tools ready</div>
+  <div class="hero-reminder-card" id="hero-reminder-card">
+    <div class="hero-reminder-header">
+      <span class="hero-reminder-title">📢 Reminders</span>
+      <span class="hero-reminder-count" id="hero-reminder-count">0</span>
+    </div>
+    <div class="hero-reminder-scroll" id="hero-reminder-scroll">
+      <div class="hero-reminder-empty" id="hero-reminder-empty">No reminders yet.<br/>Click + Add to post one.</div>
+      <div class="hero-reminder-track" id="hero-reminder-track" style="display:none;"></div>
+    </div>
+    <div class="hero-reminder-footer">
+      <button onclick="openReminder()">+ Add reminder</button>
+    </div>
   </div>
 </div>
 
@@ -629,6 +788,108 @@
       document.execCommand('copy');
     });
   }
+
+  let reminders = JSON.parse(localStorage.getItem('olyzon-reminders') || '[]');
+
+  function saveReminders() {
+    localStorage.setItem('olyzon-reminders', JSON.stringify(reminders));
+  }
+
+  function renderTicker() {
+    const wrap = document.getElementById('ticker-wrap');
+    const track = document.getElementById('ticker-track');
+    const hero = document.querySelector('.hero');
+    if (reminders.length === 0) {
+      wrap.classList.remove('has-items');
+      hero && hero.classList.remove('ticker-offset');
+      track.innerHTML = '';
+    } else {
+      wrap.classList.add('has-items');
+      hero && hero.classList.add('ticker-offset');
+      const repeated = [...reminders, ...reminders, ...reminders];
+      track.innerHTML = repeated.map(r => `<span class="ticker-item">${r}</span>`).join('');
+      const totalLen = repeated.join('').length;
+      track.style.animationDuration = Math.max(20, totalLen * 0.18) + 's';
+    }
+    // Update hero reminder card
+    const heroTrack = document.getElementById('hero-reminder-track');
+    const heroEmpty = document.getElementById('hero-reminder-empty');
+    const heroCount = document.getElementById('hero-reminder-count');
+    heroCount.textContent = reminders.length;
+    if (reminders.length === 0) {
+      heroEmpty.style.display = 'block';
+      heroTrack.style.display = 'none';
+      heroTrack.innerHTML = '';
+    } else {
+      heroEmpty.style.display = 'none';
+      heroTrack.style.display = 'flex';
+      // Double the items for seamless loop
+      const doubled = [...reminders, ...reminders];
+      heroTrack.innerHTML = doubled.map(r =>
+        `<div class="hero-reminder-item">${r}</div>`
+      ).join('');
+      // Adjust scroll speed
+      const dur = Math.max(8, reminders.length * 3);
+      heroTrack.style.animationDuration = dur + 's';
+    }
+  }
+
+  function renderReminderList() {
+    const list = document.getElementById('reminder-list');
+    const empty = document.getElementById('reminder-empty');
+    if (reminders.length === 0) {
+      empty.style.display = 'block';
+      list.innerHTML = '';
+      return;
+    }
+    empty.style.display = 'none';
+    list.innerHTML = reminders.map((r, i) =>
+      `<div class="reminder-entry">
+        <span>${r}</span>
+        <button class="reminder-del" onclick="deleteReminder(${i})">✕</button>
+      </div>`
+    ).join('');
+  }
+
+  function addReminder() {
+    const input = document.getElementById('reminder-input');
+    const val = input.value.trim();
+    if (!val) return;
+    reminders.push(val);
+    saveReminders();
+    renderTicker();
+    renderReminderList();
+    input.value = '';
+  }
+
+  function deleteReminder(i) {
+    reminders.splice(i, 1);
+    saveReminders();
+    renderTicker();
+    renderReminderList();
+  }
+
+  function openReminder() {
+    document.getElementById('reminder-modal').classList.add('open');
+    renderReminderList();
+  }
+
+  function closeReminder() {
+    document.getElementById('reminder-modal').classList.remove('open');
+  }
+
+  // Close modal on backdrop click
+  document.getElementById('reminder-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeReminder();
+  });
+
+  // Add reminder on Enter key
+  document.getElementById('reminder-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); addReminder(); }
+  });
+
+  // Init
+  renderTicker();
 </script>
 </body>
 </html>
