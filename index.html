@@ -104,7 +104,7 @@
   }
   .stat-label { font-size: 13px; color: var(--muted); font-family: var(--font-mono); }
 
-  /* REMINDER CARD (hero right) */
+  /* QUICK LINKS CARD */
   .hero-reminder-card {
     background: var(--bg2);
     border: 1px solid var(--border);
@@ -112,7 +112,6 @@
     overflow: hidden;
     height: 280px;
     display: flex; flex-direction: column;
-    position: relative;
   }
   .hero-reminder-header {
     padding: 16px 20px 12px;
@@ -123,47 +122,61 @@
   .hero-reminder-title { font-size: 13px; font-weight: 700; color: var(--text); letter-spacing: -0.01em; }
   .hero-reminder-count {
     font-size: 11px; padding: 2px 8px; border-radius: 99px;
-    background: rgba(212,245,76,0.12); color: var(--accent);
+    background: rgba(90,240,196,0.12); color: var(--accent2);
     font-family: var(--font-mono); font-weight: 600;
   }
-  .hero-reminder-scroll {
-    flex: 1; overflow: hidden; position: relative;
+  .ql-body { flex: 1; overflow-y: auto; padding: 8px 0; }
+  .ql-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 20px; text-decoration: none;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
   }
-  .hero-reminder-track {
-    display: flex; flex-direction: column; gap: 0;
-    animation: scroll-up 12s linear infinite;
-    padding: 8px 0;
-  }
-  .hero-reminder-scroll:hover .hero-reminder-track { animation-play-state: paused; }
-  @keyframes scroll-up {
-    0%   { transform: translateY(0); }
-    100% { transform: translateY(-50%); }
-  }
-  .hero-reminder-item {
-    padding: 10px 20px;
-    font-size: 13px; font-family: var(--font-mono); color: var(--text);
-    line-height: 1.5; border-bottom: 1px solid var(--border);
-    display: flex; align-items: flex-start; gap: 10px;
-  }
-  .hero-reminder-item::before {
-    content: '★'; color: var(--accent); font-size: 10px; margin-top: 3px; flex-shrink: 0;
-  }
-  .hero-reminder-empty {
-    padding: 20px; font-size: 12px; color: var(--muted);
-    font-family: var(--font-mono); text-align: center; margin-top: 40px;
-  }
-  .hero-reminder-footer {
-    padding: 10px 16px;
-    border-top: 1px solid var(--border);
-    flex-shrink: 0;
-  }
+  .ql-item:hover { background: rgba(255,255,255,0.04); }
+  .ql-item-icon { font-size: 14px; flex-shrink: 0; }
+  .ql-item-text { font-size: 13px; font-family: var(--font-mono); color: var(--text); flex: 1; }
+  .ql-item-arrow { font-size: 11px; color: var(--muted); }
+  .ql-empty { padding: 20px; font-size: 12px; color: var(--muted); font-family: var(--font-mono); text-align: center; margin-top: 30px; }
+  .hero-reminder-footer { padding: 10px 16px; border-top: 1px solid var(--border); flex-shrink: 0; }
   .hero-reminder-footer button {
     width: 100%; padding: 8px; border-radius: 8px;
-    background: rgba(212,245,76,0.08); border: 1px solid rgba(212,245,76,0.2);
-    color: var(--accent); font-size: 12px; font-family: var(--font-display);
+    background: rgba(90,240,196,0.08); border: 1px solid rgba(90,240,196,0.2);
+    color: var(--accent2); font-size: 12px; font-family: var(--font-display);
     font-weight: 600; cursor: pointer; transition: all 0.15s;
   }
-  .hero-reminder-footer button:hover { background: rgba(212,245,76,0.15); }
+  .hero-reminder-footer button:hover { background: rgba(90,240,196,0.15); }
+
+  /* QUICK LINKS MODAL */
+  .ql-modal {
+    display: none; position: fixed; inset: 0; z-index: 200;
+    background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+    align-items: center; justify-content: center;
+  }
+  .ql-modal.open { display: flex; }
+  .ql-modal-box {
+    background: var(--bg2); border: 1px solid var(--border-hover);
+    border-radius: 16px; padding: 28px; width: min(480px, 90vw);
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .ql-modal-box h3 { font-size: 16px; font-weight: 700; color: var(--text); }
+  .ql-modal-box input {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 12px;
+    font-family: var(--font-mono); font-size: 13px; color: var(--text);
+    outline: none; width: 100%; transition: border-color 0.18s;
+  }
+  .ql-modal-box input:focus { border-color: rgba(90,240,196,0.4); }
+  .ql-list { display: flex; flex-direction: column; gap: 6px; max-height: 200px; overflow-y: auto; }
+  .ql-entry {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--bg3); border-radius: 8px; padding: 8px 12px;
+    font-size: 12px; font-family: var(--font-mono); color: var(--text);
+    border: 1px solid var(--border); gap: 8px;
+  }
+  .ql-entry-label { flex: 1; font-weight: 600; }
+  .ql-entry-url { color: var(--muted); flex: 2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ql-del { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 14px; padding: 0 4px; transition: color 0.15s; }
+  .ql-del:hover { color: var(--accent3); }
 
   /* TOOL GRID */
   .tools-section {
@@ -343,35 +356,6 @@
   .tool-card:nth-child(3) { animation-delay: 0.15s; }
   .tool-card:nth-child(4) { animation-delay: 0.2s; }
 
-  /* TICKER */
-  .ticker-wrap {
-    position: fixed; top: 60px; left: 0; right: 0; z-index: 99;
-    background: var(--accent); overflow: hidden;
-    height: 0; transition: height 0.3s ease;
-  }
-  .ticker-wrap.has-items { height: 32px; }
-  .ticker-track {
-    display: flex; align-items: center; height: 32px;
-    white-space: nowrap;
-    animation: ticker-scroll 30s linear infinite;
-  }
-  .ticker-wrap:hover .ticker-track { animation-play-state: paused; }
-  @keyframes ticker-scroll {
-    0%   { transform: translateX(100vw); }
-    100% { transform: translateX(-100%); }
-  }
-  .ticker-item {
-    font-size: 12px; font-weight: 700; color: #0b0c0e;
-    font-family: var(--font-display); letter-spacing: 0.03em;
-    padding: 0 40px;
-  }
-  .ticker-item::before {
-    content: '★'; margin-right: 12px; font-size: 10px;
-  }
-  /* push hero down when ticker visible */
-  .hero { transition: padding-top 0.3s ease; }
-  .hero.ticker-offset { padding-top: 172px; }
-
   /* REMINDER MODAL */
   .reminder-modal {
     display: none; position: fixed; inset: 0; z-index: 200;
@@ -407,6 +391,32 @@
   }
   .reminder-del:hover { color: var(--accent3); }
   .reminder-empty { font-size: 12px; color: var(--muted); font-family: var(--font-mono); }
+
+  /* TICKER */
+  .ticker-wrap {
+    position: fixed; top: 60px; left: 0; right: 0; z-index: 99;
+    background: var(--accent); overflow: hidden;
+    height: 0; transition: height 0.3s ease;
+  }
+  .ticker-wrap.has-items { height: 32px; }
+  .ticker-track {
+    display: flex; align-items: center; height: 32px;
+    white-space: nowrap;
+    animation: ticker-scroll 30s linear infinite;
+  }
+  .ticker-wrap:hover .ticker-track { animation-play-state: paused; }
+  @keyframes ticker-scroll {
+    0%   { transform: translateX(100vw); }
+    100% { transform: translateX(-100%); }
+  }
+  .ticker-item {
+    font-size: 12px; font-weight: 700; color: #0b0c0e;
+    font-family: var(--font-display); letter-spacing: 0.03em;
+    padding: 0 40px;
+  }
+  .ticker-item::before { content: "★"; margin-right: 12px; font-size: 10px; }
+  .hero { transition: padding-top 0.3s ease; }
+  .hero.ticker-offset { padding-top: 172px; }
 </style>
 </head>
 <body>
@@ -419,6 +429,7 @@
     <button class="nav-link" onclick="openReminder()" id="reminder-nav-btn">📢 Reminders</button>
   </div>
 </nav>
+
 <div class="ticker-wrap" id="ticker-wrap">
   <div class="ticker-track" id="ticker-track"></div>
 </div>
@@ -449,18 +460,31 @@
       <div class="stat-label">tools ready</div>
     </div>
   </div>
-  <div class="hero-reminder-card" id="hero-reminder-card">
+  <div class="hero-reminder-card" id="hero-ql-card">
     <div class="hero-reminder-header">
-      <span class="hero-reminder-title">📢 Reminders</span>
-      <span class="hero-reminder-count" id="hero-reminder-count">0</span>
+      <span class="hero-reminder-title">🔗 Quick Links</span>
+      <span class="hero-reminder-count" id="ql-count">0</span>
     </div>
-    <div class="hero-reminder-scroll" id="hero-reminder-scroll">
-      <div class="hero-reminder-empty" id="hero-reminder-empty">No reminders yet.<br/>Click + Add to post one.</div>
-      <div class="hero-reminder-track" id="hero-reminder-track" style="display:none;"></div>
+    <div class="ql-body" id="ql-body">
+      <div class="ql-empty" id="ql-empty">No links yet.<br/>Click + Add Link to get started.</div>
     </div>
     <div class="hero-reminder-footer">
-      <button onclick="openReminder()">+ Add reminder</button>
+      <button onclick="openQL()">+ Add link</button>
     </div>
+  </div>
+
+</div>
+
+<div class="ql-modal" id="ql-modal">
+  <div class="ql-modal-box">
+    <h3>🔗 Manage Quick Links</h3>
+    <input type="text" id="ql-label-input" placeholder="Label (e.g. Campaign Sheet)" />
+    <input type="url" id="ql-url-input" placeholder="URL (https://...)" />
+    <div class="btn-group">
+      <button class="btn-run teal" onclick="addQL()">+ Add</button>
+      <button class="btn-secondary" onclick="closeQL()">Close</button>
+    </div>
+    <div class="ql-list" id="ql-list"></div>
   </div>
 </div>
 
@@ -799,39 +823,18 @@
     const wrap = document.getElementById('ticker-wrap');
     const track = document.getElementById('ticker-track');
     const hero = document.querySelector('.hero');
-    if (reminders.length === 0) {
+    if (!reminders.length) {
       wrap.classList.remove('has-items');
       hero && hero.classList.remove('ticker-offset');
       track.innerHTML = '';
-    } else {
-      wrap.classList.add('has-items');
-      hero && hero.classList.add('ticker-offset');
-      const repeated = [...reminders, ...reminders, ...reminders];
-      track.innerHTML = repeated.map(r => `<span class="ticker-item">${r}</span>`).join('');
-      const totalLen = repeated.join('').length;
-      track.style.animationDuration = Math.max(20, totalLen * 0.18) + 's';
+      return;
     }
-    // Update hero reminder card
-    const heroTrack = document.getElementById('hero-reminder-track');
-    const heroEmpty = document.getElementById('hero-reminder-empty');
-    const heroCount = document.getElementById('hero-reminder-count');
-    heroCount.textContent = reminders.length;
-    if (reminders.length === 0) {
-      heroEmpty.style.display = 'block';
-      heroTrack.style.display = 'none';
-      heroTrack.innerHTML = '';
-    } else {
-      heroEmpty.style.display = 'none';
-      heroTrack.style.display = 'flex';
-      // Double the items for seamless loop
-      const doubled = [...reminders, ...reminders];
-      heroTrack.innerHTML = doubled.map(r =>
-        `<div class="hero-reminder-item">${r}</div>`
-      ).join('');
-      // Adjust scroll speed
-      const dur = Math.max(8, reminders.length * 3);
-      heroTrack.style.animationDuration = dur + 's';
-    }
+    wrap.classList.add('has-items');
+    hero && hero.classList.add('ticker-offset');
+    const repeated = [...reminders, ...reminders, ...reminders];
+    track.innerHTML = repeated.map(r => `<span class="ticker-item">${r}</span>`).join('');
+    const dur = Math.max(20, repeated.join('').length * 0.18);
+    track.style.animationDuration = dur + 's';
   }
 
   function renderReminderList() {
@@ -890,6 +893,71 @@
 
   // Init
   renderTicker();
+
+  // ── QUICK LINKS ──
+  let quickLinks = JSON.parse(localStorage.getItem('olyzon-quicklinks') || '[]');
+
+  function saveQL() { localStorage.setItem('olyzon-quicklinks', JSON.stringify(quickLinks)); }
+
+  const ICONS = ['📊','📋','📁','📌','🗂','📈','📝','🔗'];
+  function iconFor(i) { return ICONS[i % ICONS.length]; }
+
+  function renderQL() {
+    const body = document.getElementById('ql-body');
+    const empty = document.getElementById('ql-empty');
+    const count = document.getElementById('ql-count');
+    count.textContent = quickLinks.length;
+    if (!quickLinks.length) {
+      body.innerHTML = '<div class="ql-empty" id="ql-empty">No links yet.<br/>Click + Add Link.</div>';
+      return;
+    }
+    body.innerHTML = quickLinks.map((l, i) => `
+      <a class="ql-item" href="${l.url}" target="_blank" rel="noopener">
+        <span class="ql-item-icon">${iconFor(i)}</span>
+        <span class="ql-item-text">${l.label}</span>
+        <span class="ql-item-arrow">↗</span>
+      </a>`).join('');
+  }
+
+  function renderQLList() {
+    const list = document.getElementById('ql-list');
+    if (!quickLinks.length) { list.innerHTML = '<p style="font-size:12px;color:var(--muted);font-family:var(--font-mono);">No links added yet.</p>'; return; }
+    list.innerHTML = quickLinks.map((l, i) => `
+      <div class="ql-entry">
+        <span class="ql-entry-label">${l.label}</span>
+        <span class="ql-entry-url">${l.url}</span>
+        <button class="ql-del" onclick="deleteQL(${i})">✕</button>
+      </div>`).join('');
+  }
+
+  function addQL() {
+    const label = document.getElementById('ql-label-input').value.trim();
+    const url = document.getElementById('ql-url-input').value.trim();
+    if (!label || !url) return;
+    quickLinks.push({ label, url });
+    saveQL(); renderQL(); renderQLList();
+    document.getElementById('ql-label-input').value = '';
+    document.getElementById('ql-url-input').value = '';
+  }
+
+  function deleteQL(i) {
+    quickLinks.splice(i, 1);
+    saveQL(); renderQL(); renderQLList();
+  }
+
+  function openQL() {
+    document.getElementById('ql-modal').classList.add('open');
+    renderQLList();
+  }
+
+  function closeQL() { document.getElementById('ql-modal').classList.remove('open'); }
+
+  document.getElementById('ql-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeQL();
+  });
+
+  renderQL();
+
 </script>
 </body>
 </html>
