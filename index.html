@@ -4,7 +4,6 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Toolbox — Your Data Utilities</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
 <style>
@@ -457,7 +456,7 @@
     <h1>Less clicks.<br /><em>More done.</em></h1>
     <p class="hero-sub">All your go-to data tools in one place — no more jumping between sheets and formulas.</p>
     <div class="hero-stats">
-      <div class="stat-num" id="tool-count">4</div>
+      <div class="stat-num" id="tool-count">3</div>
       <div class="stat-label">tools ready</div>
     </div>
   </div>
@@ -642,62 +641,44 @@
       </div>
     </div>
 
-  
-    <!-- BRAND LIFT STUDY ANALYZER -->
-    <div class="tool-card wide" style="grid-column: span 2;">
+
+    <!-- SPEND / REVENUE CALCULATOR -->
+    <div class="tool-card">
       <div class="card-header">
-        <div class="card-icon icon-purple" style="background:rgba(180,120,255,0.12);font-size:18px;">📊</div>
+        <div class="card-icon icon-orange">₱</div>
         <div class="card-title-group">
-          <div class="card-title">Brand Lift Study Analyzer</div>
-          <div class="card-desc">Upload Lucid Excel export → get deck-ready insights automatically</div>
+          <div class="card-title">Spend Calculator</div>
+          <div class="card-desc">Compute spend from impressions & CPM</div>
         </div>
-        <div class="card-badge" style="background:rgba(180,120,255,0.12);color:#c084fc;font-size:10px;padding:3px 8px;border-radius:99px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;font-family:var(--font-mono);">BLS</div>
+        <div class="card-badge badge-orange">CTV / Media</div>
       </div>
       <div class="card-body">
-
         <div class="field-row">
-          <div class="field" style="flex:2;">
-            <label>Campaign / Brand name</label>
-            <input type="text" id="bls-brand" placeholder="e.g. Wegmans Seasonal Awareness Campaign" style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-family:var(--font-mono);font-size:13px;color:var(--text);outline:none;width:100%;" />
+          <div class="field">
+            <label>Impressions</label>
+            <input type="number" id="sc-imp" placeholder="1000000" />
           </div>
-          <div class="field" style="flex:1;">
-            <label>Confidence level</label>
-            <select id="bls-conf" style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-family:var(--font-mono);font-size:13px;color:var(--text);outline:none;width:100%;">
-              <option value="90">90%</option>
-              <option value="95">95%</option>
-              <option value="80">80%</option>
-            </select>
+          <div class="field">
+            <label>CPM ($)</label>
+            <input type="number" id="sc-cpm" value="1000" placeholder="1000" step="0.01" />
           </div>
         </div>
-
-        <div class="field">
-          <label>Upload Lucid Excel export (.xlsx)</label>
-          <div id="bls-drop" onclick="document.getElementById('bls-file').click()" style="border:1px dashed rgba(180,120,255,0.3);border-radius:8px;padding:24px;text-align:center;cursor:pointer;transition:all 0.18s;background:rgba(180,120,255,0.03);">
-            <div style="font-size:24px;margin-bottom:8px;">📂</div>
-            <div style="font-size:13px;color:var(--muted);font-family:var(--font-mono);">Click to upload or drag & drop your Lucid .xlsx file</div>
-            <div id="bls-filename" style="font-size:12px;color:#c084fc;margin-top:6px;font-family:var(--font-mono);"></div>
-          </div>
-          <input type="file" id="bls-file" accept=".xlsx" style="display:none;" onchange="handleBLSFile(this)" />
-        </div>
-
         <div class="btn-group">
-          <button class="btn-run" style="background:#c084fc;color:#0b0c0e;" onclick="runBLS()">▶ Analyze</button>
-          <button class="btn-secondary" onclick="clearBLS()">Clear</button>
+          <button class="btn-run orange" onclick="runSpend()">▶ Calculate</button>
+          <button class="btn-secondary" onclick="clearSpend()">Clear</button>
         </div>
-
-        <div id="bls-output" style="display:none;margin-top:4px;">
-          <div id="bls-metrics" class="metrics" style="grid-template-columns:repeat(5,1fr);margin-bottom:12px;"></div>
-          <div style="background:#0d0e10;border:1px solid var(--border);border-radius:8px;padding:14px;">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border);">
-              <span style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);font-family:var(--font-mono);">Generated insight</span>
-              <button class="copy-pill" onclick="copyBLS()">Copy</button>
+        <div id="sc-results" style="display:none;">
+          <div class="metrics" style="grid-template-columns: 1fr;">
+            <div class="metric-tile" style="border-color: rgba(255,107,74,0.3);">
+              <div class="val" id="sc-spend" style="color: var(--accent3);">—</div>
+              <div class="lbl">Spend</div>
             </div>
-            <div id="bls-insight-text" style="font-size:13px;color:var(--text);line-height:1.8;font-family:var(--font-mono);white-space:pre-wrap;"></div>
           </div>
         </div>
-
       </div>
     </div>
+
+
   </div>
 </div>
 
@@ -837,6 +818,21 @@
     document.getElementById('imp-results').style.display = 'block';
     document.getElementById('ir-net').textContent = Math.round(net).toLocaleString();
     document.getElementById('ir-gross').textContent = Math.round(gross).toLocaleString();
+  }
+
+  function runSpend() {
+    const imp = parseFloat(document.getElementById('sc-imp').value);
+    const cpm = parseFloat(document.getElementById('sc-cpm').value);
+    if (isNaN(imp) || isNaN(cpm)) { alert('Enter Impressions and CPM.'); return; }
+    const spend = (imp / 1000) * cpm;
+    document.getElementById('sc-results').style.display = 'block';
+    document.getElementById('sc-spend').textContent = '$' + spend.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+  }
+
+  function clearSpend() {
+    document.getElementById('sc-imp').value = '';
+    document.getElementById('sc-cpm').value = '1000';
+    document.getElementById('sc-results').style.display = 'none';
   }
 
   function clearImpression() {
@@ -1016,353 +1012,6 @@
   renderQL();
 
 
-  // ── BRAND LIFT STUDY ANALYZER ──
-  let blsData = null;
-
-  function handleBLSFile(input) {
-    const file = input.files[0];
-    if (!file) return;
-    document.getElementById('bls-filename').textContent = '✓ ' + file.name;
-    document.getElementById('bls-drop').style.borderColor = 'rgba(192,132,252,0.6)';
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      try {
-        const wb = XLSX.read(e.target.result, { type: 'array' });
-        blsData = parseLucidExcel(wb);
-        console.log('Parsed BLS data:', blsData);
-      } catch(err) {
-        alert('Error reading file: ' + err.message);
-      }
-    };
-    reader.readAsArrayBuffer(file);
-  }
-
-  function parseLucidExcel(wb) {
-    const overview = wb.Sheets['Overview'];
-    if (!overview) throw new Error('No Overview sheet found. Please upload a Lucid export.');
-    const rows = XLSX.utils.sheet_to_json(overview, { header: 1, defval: '' });
-
-    // Extract campaign meta
-    const meta = {};
-    rows.forEach(r => {
-      if (String(r[0]).includes('Campaign Dates')) meta.dates = String(r[2]);
-      if (String(r[0]).includes('Advertiser')) meta.advertiser = String(r[2]);
-      if (String(r[0]).includes('Total Impressions')) meta.impressions = r[2];
-      if (String(r[0]).includes('Total Exposed Completes')) meta.exposedN = r[2];
-      if (String(r[0]).includes('Total Control Completes')) meta.controlN = r[2];
-    });
-
-    // Find header row (KPIs row)
-    let headerRow = -1;
-    for (let i = 0; i < rows.length; i++) {
-      if (String(rows[i][0]) === 'KPIs') { headerRow = i; break; }
-    }
-    if (headerRow === -1) throw new Error('Could not find KPIs header row.');
-
-    // Parse KPI rows - group by question
-    const kpiMap = {};
-    const kpiOrder = [];
-    for (let i = headerRow + 1; i < rows.length; i++) {
-      const r = rows[i];
-      const kpiRaw = String(r[0]).trim();
-      const answer = String(r[1]).trim();
-      if (!answer || answer === 'Total Sample Size' || answer === 'None of the above') continue;
-
-      // Extract KPI name
-      let kpiName = '';
-      if (kpiRaw && kpiRaw !== 'NaN' && kpiRaw !== '') {
-        kpiName = kpiRaw.replace(/^Q\d+:\s*/, '').trim();
-      }
-
-      // Find the brand row (first answer that matches advertiser or first non-competitor)
-      const ctlPct = parseFloat(r[2]);
-      const ctlN = parseInt(r[3]);
-      const expPct = parseFloat(r[4]);
-      const expN = parseInt(r[5]);
-      const lift = parseFloat(r[6]);
-
-      if (kpiName && !kpiMap[kpiName]) {
-        kpiMap[kpiName] = { kpi: kpiName, ctl: ctlPct, ctlN, exp: expPct, expN, lift: parseFloat((expPct - ctlPct).toFixed(4)) };
-        kpiOrder.push(kpiName);
-      } else if (!kpiName && kpiOrder.length > 0) {
-        // continuation of same KPI — skip competitors
-      }
-    }
-
-    // Parse demographic sheets
-    const demo = {};
-    ['Gender', 'Age'].forEach(sheetName => {
-      const sheet = wb.Sheets[sheetName];
-      if (!sheet) return;
-      const drows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' });
-      demo[sheetName] = parseDemoSheet(drows, sheetName);
-    });
-
-    return { meta, kpis: kpiOrder.map(k => kpiMap[k]), demo };
-  }
-
-  function parseDemoSheet(rows, sheetName) {
-    // Row 1 = segment names, Row 2 = sub-headers, Row 3+ = data
-    const segments = [];
-    const segRow = rows[1] || [];
-    // Find segment column groups (every 5 cols after col 1)
-    for (let c = 2; c < segRow.length; c += 5) {
-      const name = String(segRow[c] || '').trim();
-      if (name && name !== 'NaN') segments.push({ name, col: c });
-    }
-
-    const kpiData = {};
-    let currentKPI = '';
-    for (let i = 3; i < rows.length; i++) {
-      const r = rows[i];
-      const kpiRaw = String(r[0] || '').trim();
-      const answer = String(r[1] || '').trim();
-      if (kpiRaw && kpiRaw !== 'NaN') currentKPI = kpiRaw.replace(/^Q\d+:\s*/, '').trim();
-      if (!currentKPI) continue;
-      if (!answer || answer === 'Total Sample Size' || answer === 'None of the above') continue;
-      if (!kpiData[currentKPI]) kpiData[currentKPI] = {};
-      segments.forEach(seg => {
-        if (!kpiData[currentKPI][seg.name]) {
-          const ctl = parseFloat(r[seg.col]);
-          const exp = parseFloat(r[seg.col + 2]);
-          if (!isNaN(ctl) && !isNaN(exp)) {
-            kpiData[currentKPI][seg.name] = { lift: parseFloat((exp - ctl).toFixed(4)), ctl, exp };
-          }
-        }
-      });
-    }
-    return { segments: segments.map(s => s.name), kpiData };
-  }
-
-  function pct(v) { return (v * 100).toFixed(1) + '%'; }
-  function liftStr(v) { const p = (v * 100).toFixed(1); return (v >= 0 ? '+' : '') + p + '%'; }
-
-  function blsKpiStory(r, brand, conf) {
-    const liftPct = parseFloat((r.lift * 100).toFixed(1));
-    const expPct = parseFloat((r.exp * 100).toFixed(1));
-    const ctlPct = parseFloat((r.ctl * 100).toFixed(1));
-    const kpi = r.kpi;
-    let takeaway = '', nextSteps = '';
-
-    if (kpi.includes('Awareness')) {
-      takeaway = ctlPct >= 40
-        ? `Brand Awareness is already high in absolute terms (~${ctlPct}% among control), confirming that ${brand} benefits from strong baseline familiarity. The campaign generated a ${liftPct >= 3 ? 'strong' : 'positive directional'} uplift of +${liftPct}% (Exposed: ${expPct}% vs Control: ${ctlPct}%), confirming that exposure successfully reinforced awareness and reached relevant audiences.`
-        : `Brand Awareness delivered a${liftPct >= 3 ? ' strong' : ''} uplift of +${liftPct}% (Exposed: ${expPct}% vs Control: ${ctlPct}%), ${liftPct >= 3 ? 'confirming the campaign successfully expanded reach' : 'indicating positive brand presence building among exposed audiences'}.`;
-      nextSteps = `• Identify high-opportunity audience segments by analyzing Brand Awareness lift across socio-demographic cuts.
-• Explore awareness differences by purchase intent to understand which audiences are most receptive.
-• Use these insights to refine future targeting, prioritizing segments where awareness reinforcement can most efficiently translate into consideration.`;
-
-    } else if (kpi.includes('Familiarity')) {
-      takeaway = liftPct >= 5
-        ? `Brand Familiarity delivered one of the strongest lifts in the study at +${liftPct}% (Exposed: ${expPct}% vs Control: ${ctlPct}%), confirming that the campaign successfully deepened audience connection with ${brand} beyond surface-level awareness. This level of familiarity lift indicates that exposed audiences are developing a more meaningful relationship with the brand.`
-        : `Brand Familiarity showed a positive uplift of +${liftPct}% (Exposed: ${expPct}% vs Control: ${ctlPct}%), indicating that CTV exposure is effectively building a deeper understanding of ${brand} among target audiences.`;
-      nextSteps = `• Layer familiarity results with purchase intent data to identify which audience segments are closest to conversion.
-• Use high-familiarity audiences as a priority retargeting pool in future flights.
-• Explore creative messaging that reinforces key brand differentiators to accelerate familiarity growth.`;
-
-    } else if (kpi.includes('Recall')) {
-      takeaway = liftPct >= 5
-        ? `The campaign delivered a standout Ad Recall uplift of +${liftPct}% (Exposed: ${expPct}% vs Control: ${ctlPct}%), confirming that ${brand}'s creative successfully broke through the CTV environment. This result shows the campaign created a clear and timely memory of the brand among exposed viewers — a critical foundation for driving downstream consideration and purchase intent.`
-        : `Ad Recall delivered a positive uplift of +${liftPct}% (Exposed: ${expPct}% vs Control: ${ctlPct}%), confirming that ${brand}'s messaging resonated with exposed audiences and contributed to brand recall within the competitive landscape.`;
-      nextSteps = `• Capitalize on high memorability by maintaining consistent creative presence during key shopping or decision windows.
-• Identify the audiences driving recall (by age, HHI, frequency) to amplify impact in future flights.
-• Use Ad Recall as a leading indicator to fuel downstream KPIs such as consideration and purchase intent.`;
-
-    } else if (kpi.includes('Favorability')) {
-      takeaway = liftPct >= 5
-        ? `Brand Favorability achieved a strong uplift of +${liftPct}% (Exposed: ${expPct}% vs Control: ${ctlPct}%), confirming that CTV exposure is actively building positive sentiment toward ${brand} and moving audiences closer to consideration and advocacy.`
-        : `Brand Favorability shows a positive directional uplift of +${liftPct}% (Exposed: ${expPct}% vs Control: ${ctlPct}%), indicating that exposure is reinforcing existing positive perceptions of ${brand}. In a competitive retail environment, maintaining and refreshing positive sentiment ahead of key purchase moments is a critical role for brand advertising.`;
-      nextSteps = `• Explore which brand attributes (quality, value, freshness, convenience) are most strongly linked to favorable perception via Message Association.
-• Identify gaps in message association to sharpen future creative messaging.
-• Use high-favorability audiences as a conversion-focused retargeting pool.`;
-
-    } else if (kpi.includes('Consideration')) {
-      takeaway = liftPct >= 3
-        ? `Brand Consideration delivered a meaningful uplift of +${liftPct}% (Exposed: ${expPct}% vs Control: ${ctlPct}%), confirming the campaign is successfully moving audiences toward active purchase or visit intent. Consideration is a high-intent KPI that typically requires sustained exposure and strong messaging to shift — this result confirms the campaign is working at the bottom of the funnel.`
-        : liftPct > 0
-        ? `Brand Consideration shows a positive directional movement of +${liftPct}% (Exposed: ${expPct}% vs Control: ${ctlPct}%). Consideration is a higher-intent KPI that typically requires more time and repetition to shift meaningfully. Taken alongside strong recall and familiarity results, this suggests the campaign is building the right foundations for future conversion.`
-        : `Brand Consideration remained stable (Exposed: ${expPct}% vs Control: ${ctlPct}%). This KPI typically requires sustained exposure and specific triggers to shift — the strong upper-funnel results provide a solid base to build upon in future flights with more targeted consideration-driving messaging.`;
-      nextSteps = `• Introduce Message Association to understand which brand attributes are (or are not) driving consideration.
-• Analyze consideration by demographic cuts (age, HHI) to identify segments closest to conversion.
-• Use high-recall and high-familiarity audiences as a retargeting pool with consideration-focused creative.`;
-    }
-
-    return { takeaway, nextSteps };
-  }
-
-  function runBLS() {
-    if (!blsData) { alert('Please upload a Lucid Excel file first.'); return; }
-
-    const brand = document.getElementById('bls-brand').value.trim() ||
-      blsData.meta.advertiser || 'the brand';
-    const conf = document.getElementById('bls-conf').value;
-    const kpis = blsData.kpis;
-    if (!kpis || !kpis.length) { alert('Could not parse KPI data from file.'); return; }
-
-    // Metric tiles
-    const strongest = kpis.reduce((a, b) => Math.abs(a.lift) > Math.abs(b.lift) ? a : b);
-    document.getElementById('bls-metrics').innerHTML = kpis.map(r => {
-      const liftPct = parseFloat((r.lift * 100).toFixed(1));
-      return `<div class="metric-tile" style="${r.kpi === strongest.kpi ? 'border-color:rgba(192,132,252,0.4);background:rgba(192,132,252,0.05);' : ''}">
-        <div class="val" style="font-size:16px;color:${liftPct > 0 ? '#c084fc' : liftPct < 0 ? 'var(--accent3)' : 'var(--muted)'};">${liftPct > 0 ? '+' : ''}${liftPct}%</div>
-        <div class="lbl" style="font-size:10px;">${r.kpi.replace('Brand ','')}</div>
-      </div>`;
-    }).join('');
-
-    // Build insight text
-    const avgLift = (kpis.reduce((s, r) => s + r.lift, 0) / kpis.length * 100).toFixed(1);
-    const posKpis = kpis.filter(r => r.lift > 0);
-
-    let out = `BRAND LIFT STUDY — KEY INSIGHTS
-`;
-    out += `Campaign: ${brand}
-`;
-    if (blsData.meta.dates) out += `Flight: ${blsData.meta.dates}
-`;
-    if (blsData.meta.impressions) out += `Total Impressions: ${Number(blsData.meta.impressions).toLocaleString()}
-`;
-    out += `Exposed n=${blsData.meta.exposedN} | Control n=${blsData.meta.controlN} | ${conf}% Confidence Level
-`;
-    out += `${'─'.repeat(50)}
-
-`;
-
-    out += `OVERALL PERFORMANCE
-`;
-    out += `The campaign delivered positive lift across ${posKpis.length} of ${kpis.length} KPIs, with an average lift of ${avgLift > 0 ? '+' : ''}${avgLift}%. `;
-    out += `Strongest KPI: ${strongest.kpi} at ${liftStr(strongest.lift)} (Exposed: ${pct(strongest.exp)} vs Control: ${pct(strongest.ctl)}).
-
-`;
-
-    // Per KPI
-    kpis.forEach((r, idx) => {
-      const liftPct = parseFloat((r.lift * 100).toFixed(1));
-      const { takeaway, nextSteps } = blsKpiStory(r, brand, conf);
-      out += `${'─'.repeat(50)}
-`;
-      out += `0${idx + 1}. ${r.kpi.toUpperCase()}
-`;
-      out += `Exposed: ${pct(r.exp)} (n=${r.expN}) | Control: ${pct(r.ctl)} (n=${r.ctlN}) | Lift: ${liftPct > 0 ? '+' : ''}${liftPct}%
-
-`;
-      out += `Key Takeaways
-${takeaway}
-
-`;
-      out += `Next Steps
-${nextSteps}
-
-`;
-    });
-
-    // Demographic insights
-    const gender = blsData.demo?.Gender;
-    const age = blsData.demo?.Age;
-
-    if (gender && gender.segments.length) {
-      out += `${'─'.repeat(50)}
-`;
-      out += `LIFT PERFORMANCE BY GENDER
-`;
-      kpis.forEach(r => {
-        const kpiName = r.kpi;
-        const gData = gender.kpiData[kpiName];
-        if (!gData) return;
-        const segs = Object.entries(gData).map(([seg, d]) => `${seg}: ${liftStr(d.lift)}`).join(' | ');
-        out += `• ${kpiName}: ${segs}
-`;
-      });
-
-      // Find strongest gender pattern
-      const maleKpis = kpis.map(r => ({ kpi: r.kpi, lift: gender.kpiData[r.kpi]?.Male?.lift || 0 }));
-      const femaleKpis = kpis.map(r => ({ kpi: r.kpi, lift: gender.kpiData[r.kpi]?.Female?.lift || 0 }));
-      const maleAvg = maleKpis.reduce((s, r) => s + r.lift, 0) / maleKpis.length;
-      const femaleAvg = femaleKpis.reduce((s, r) => s + r.lift, 0) / femaleKpis.length;
-      out += `
-Insight: ${maleAvg > femaleAvg ? 'Male' : 'Female'} audiences showed stronger overall lift (avg ${liftStr(Math.max(maleAvg, femaleAvg))} vs ${liftStr(Math.min(maleAvg, femaleAvg))}). `;
-      out += `Consider adapting messaging to improve resonance with ${maleAvg > femaleAvg ? 'female' : 'male'} audiences in future flights.
-
-`;
-    }
-
-    if (age && age.segments.length) {
-      out += `${'─'.repeat(50)}
-`;
-      out += `LIFT PERFORMANCE BY AGE
-`;
-      // Find best and worst age groups for Ad Recall or first KPI
-      const recallKpi = kpis.find(r => r.kpi.includes('Recall')) || kpis[0];
-      const agePerf = age.segments.map(seg => ({
-        seg,
-        lift: age.kpiData[recallKpi.kpi]?.[seg]?.lift || 0
-      })).sort((a, b) => b.lift - a.lift);
-
-      out += `Based on ${recallKpi.kpi}:
-`;
-      agePerf.forEach(a => { out += `• ${a.seg}: ${liftStr(a.lift)}
-`; });
-
-      const bestAge = agePerf[0];
-      const worstAge = agePerf[agePerf.length - 1];
-      out += `
-Insight: ${bestAge.seg} audiences delivered the strongest performance (${liftStr(bestAge.lift)}), while ${worstAge.seg} showed the weakest response (${liftStr(worstAge.lift)}). `;
-      out += `Prioritize ${bestAge.seg} in future targeting while reassessing messaging strategy for ${worstAge.seg} segments.
-
-`;
-    }
-
-    // Summary
-    out += `${'─'.repeat(50)}
-`;
-    out += `SUMMARY KEY TAKEAWAYS
-
-`;
-    const recallR = kpis.find(r => r.kpi.includes('Recall'));
-    const famR = kpis.find(r => r.kpi.includes('Familiar'));
-    if (recallR && recallR.lift > 0) {
-      out += `01. Ad Recall confirms campaign visibility
-The campaign delivered strong Ad Recall lift (${liftStr(recallR.lift)}), confirming ${brand} successfully broke through the CTV environment. This validates the campaign's ability to create lasting brand impressions.
-
-`;
-    }
-    if (famR && famR.lift > 0) {
-      out += `02. Brand Familiarity signals deepening brand connection
-A ${liftStr(famR.lift)} lift in Brand Familiarity confirms audiences are moving beyond surface awareness — developing a more meaningful relationship with ${brand} as a result of CTV exposure.
-
-`;
-    }
-    out += `03. Upper-funnel strength sets the stage for conversion
-Strong performance across awareness and recall KPIs provides a solid foundation. The next priority is accelerating movement through the funnel — translating brand familiarity into active consideration and purchase intent.
-
-`;
-    out += `04. Recommended next wave enhancements
-• Add Message Association to identify which brand attributes drive the strongest lift.
-• Layer demographic targeting (prioritize top-performing age and gender segments).
-• Increase frequency for under-exposed segments showing positive directional lift to push toward significance.`;
-
-    document.getElementById('bls-insight-text').textContent = out;
-    document.getElementById('bls-output').style.display = 'block';
-  }
-
-  function clearBLS() {
-    blsData = null;
-    document.getElementById('bls-file').value = '';
-    document.getElementById('bls-filename').textContent = '';
-    document.getElementById('bls-drop').style.borderColor = 'rgba(180,120,255,0.3)';
-    document.getElementById('bls-brand').value = '';
-    document.getElementById('bls-output').style.display = 'none';
-  }
-
-  function copyBLS() {
-    const text = document.getElementById('bls-insight-text').textContent;
-    navigator.clipboard.writeText(text).catch(() => {
-      const el = document.getElementById('bls-insight-text');
-      const r = document.createRange(); r.selectNode(el);
-      window.getSelection().removeAllRanges();
-      window.getSelection().addRange(r);
-      document.execCommand('copy');
-    });
-  }
 
 </script>
 </body>
